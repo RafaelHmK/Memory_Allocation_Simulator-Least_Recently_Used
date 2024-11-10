@@ -27,121 +27,30 @@ body {
     overflow: auto;
 }
 
-h2, h3 {
-    text-align: center;
-    color: #ffffff;
-    margin-bottom: 20px;
-}
-
-label {
-    font-weight: 700;
-    margin-bottom: 10px;
-    display: block;
-    color: #f5f5f5;
-}
-
-input[type="file"] {
-    margin-bottom: 20px;
-    width: 100%;
-    padding: 10px;
-    border: 2px solid #4a90e2;
-    border-radius: 5px;
-    font-size: 16px;
-    background-color: #2e2e2e;
-    color: #f5f5f5;
-}
-
-button {
-    background-color: #f56a00;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-    margin-top: 10px;
-    font-weight: 700;
-}
-
-button:hover {
-    background-color: #e65c00;
-}
-
-#processListContainer table {
-    width: 100%; 
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    color: #ffffff;
-}
-
-#processListContainer th, #processListContainer td {
-    padding: 10px 20px; 
-    text-align: center;  
-    border: 1px solid #333;  
-}
-
-#processListContainer th {
+#processListContainer div {
     background-color: #4a90e2; 
     color: white; 
     font-weight: bold;  
 }
 
-#processListContainer td {
-    background-color: #2a2a2a;  
-    color: #f5f5f5;  
-}
-
-#processListContainer {
-    margin-top: 20px;
-}
-
-#ganttChartContainer {
-    width: 100%;
-    margin-top: 20px;
-    overflow-x: auto;
-}
-
-#ganttChart {
-    width: max-content;
-    border-collapse: collapse;
-    margin-top: 10px;
-    margin-right: auto;
-    margin-left: auto;
-}
-
-#ganttChart th, #ganttChart td {
-    border: 1px solid #333;
-    padding: 10px;
-    text-align: center;
-}
-
-#ganttChart th {
-    background-color: #4a90e2;
-    color: #ffffff;
-}
-
-#ganttChart td {
-    background-color: #2a2a2a;
-    color: #ffffff;
-}
-
-.ganttCell {
-    background-color: #4a90e2;
-    color: white;
-    height: 40px;
-}
-
-.ganttEmptyCell {
-    background-color: #2e2e2e;
-}
-
-#ganttChart th.processHeader {
+#definePaginationForm button, #processTableHeader, #defineFramingForm button {
     background-color: #f56a00; /* Laranja */
     color: #ffffff;
 }
 
-#ganttChart th.timeHeader {
+#definePaginationForm .input-group-text, #pageList .processTableCell, #defineFramingForm .input-group-text {
+    background-color: #ff9849; /* Laranja-claro */
+    color: #ffffff;
+}
+
+#pageTableHeader {
     background-color: #4a90e2; /* Azul */
     color: #ffffff;
 }
+
+#pageList .pageTableCell {
+    background-color: #70b3ff; /* Azul-claro */
+    color: #ffffff;
+}
+
+ul li { cursor: move; }

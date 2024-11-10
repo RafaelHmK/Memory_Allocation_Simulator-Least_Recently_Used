@@ -1,24 +1,85 @@
-// Função para adicionar um novo processo
-function addProcess(processes, process) {
-    processes.push(process);
+function createProcess() {
+    $('#processListContainer').removeAttr('hidden');
+    const processList = $('#processList');
 
-    displayNewProcess(process);
+    if (processList.children().length >= 20) {
+        alert('O número máximo de 20 processos já foi atingido!');
+        return;
+    }
+
+    const newProcess = $('<div></div>')
+    newProcess.addClass('process list-group-item list-group-item');
+    newProcess.text('P' + (processList.children().length + 1));
+    processList.append(newProcess);
+
+    $('#definePaginationForm').removeAttr('hidden');
 }
 
-// Função para exibir os processos na tabela
-function displayNewProcess(process) {
-    const tableBody = document.querySelector('#processList tbody');
-    const newRow = document.createElement('tr');
+function definePagination() {
+    event.preventDefault();
+    const processList = $('#processList').children();
+    const pageQuant = parseInt($('#pagination').val());
 
-    newRow.innerHTML = `
-        <td>${process.name}</td>
-        <td>${process.arrivalTime}</td>
-        <td>${process.burstTime}</td>
-        <td>${process.priority}</td>
-    `;
+    if (processList.length * pageQuant > 20) {
+        alert('O número de páginas excede o limite de 20!');
+        return;
+    }
 
-    tableBody.appendChild(newRow);
+    const pageListBody = $('#pageList tbody');
+    pageListBody.empty();
+    $('#pageTableHeader').attr('colspan', pageQuant);
+
+    processList.each(function(index, process) {
+        const processName = $(process).text();
+        let row = `<tr><td class="processTableCell">${processName}</td>`;
+        for (let i = 1; i <= pageQuant; i++) row += `<td class="pageTableCell">${processName.toLowerCase()}_${i}</td>`;
+        row += '</tr>';
+        pageListBody.append(row);
+    });
+
+    $('#pageListContainer').removeAttr('hidden');
+    $('#defineFramingForm').removeAttr('hidden');
 }
+
+function defineFraming() {
+    event.preventDefault();
+    const pageList = $('#pageList .pageTableCell');
+    const frameQuant = parseInt($('#framing').val());
+
+    if (frameQuant > pageList.length) {
+        alert(`O número de quadros excede o limite de ${pageList.length}!`);
+        return;
+    }
+
+    $('#defineAllocationOrder').removeAttr('hidden');
+}
+
+function defineAllocationOrder() {
+    const pageList = $('#pageList .pageTableCell');
+
+    const unorderedPagesContainer = $('#memoryAllocationForm ul');
+
+    pageList.each(function(index, page) {
+        const listItem = $('<li class="list-group-item list-group-item-dark"></li>');
+        const movableIcon = $(`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+        </svg>`);
+
+        listItem.append(movableIcon).append(' ').append($(page).text());
+        unorderedPagesContainer.append(listItem);
+    });
+
+    unorderedPagesContainer.sortable();
+    unorderedPagesContainer.disableSelection();
+}
+
+function memoryAllocation() {
+
+}
+
+
+
+
 
 // Algoritmo de Escalonamento por Prioridade (Não Preemptivo)
 function priorityScheduling(processes) {
@@ -98,30 +159,9 @@ function displayGanttChart(ganttData) {
 
 // Função principal para iniciar o escalonamento e exibir o gráfico de Gantt
 document.addEventListener("DOMContentLoaded", function () {
-    let processes = [];
-
-    document.getElementById('processForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const process = Object.fromEntries(formData);
-
-        Object.keys(process).forEach(key => process[key] = parseInt(process[key]));
-
-        process.name = "P" + (processes.length + 1);
-        process.remainingTime = process.burstTime;
-
-        const modal = document.getElementById('processModal');
-        const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
-        modalInstance.hide();
-
-        addProcess(processes, process);
-    });
-
-    document.getElementById('startScheduling').addEventListener('click', function() {
-        if (processes.length === 0) alert('Adicione pelo menos um processo antes de iniciar o escalonamento!');
-        else {
-            const ganttData = priorityScheduling(processes);
-            displayGanttChart(ganttData);
-        }
-    });
+    $('#createProcess').on('click', createProcess);
+    $('#definePaginationForm').on('submit', definePagination);
+    $('#defineFramingForm').on('submit', defineFraming);
+    $('#defineAllocationOrder').on('click', defineAllocationOrder);
+    $('#memoryAllocationForm').on('submit', memoryAllocation);
 });
