@@ -124,6 +124,7 @@ function memoryAllocationLRUAlgorithm(frames, allocationOrder) {
     $('#memoryAllocationContainer').removeAttr('hidden');
 
     const frameUsage = new Map(); // Para rastrear o uso dos quadros para LRU
+    let pageFaults = 0; // Variável para contar erros de página
 
     allocationOrder.each(function(colIndex, pageElement) {
         const pageName = $(pageElement).text();
@@ -135,6 +136,7 @@ function memoryAllocationLRUAlgorithm(frames, allocationOrder) {
                 frames[i] = pageName;
                 frameUsage.set(pageName, colIndex); // Atualizar uso
                 pagePlaced = true;
+                pageFaults++; // Incrementar erros de página
                 break;
             }
         }
@@ -156,6 +158,7 @@ function memoryAllocationLRUAlgorithm(frames, allocationOrder) {
             frames[lruPageIndex] = pageName;
             frameUsage.delete(lruPage); // Remova a página antiga do rastreamento de uso
             frameUsage.set(pageName, colIndex); // Atualizar uso com a nova página
+            pageFaults++; // Incrementar erros de página
         }
 
         // Atualize a tabela do frontend
@@ -167,13 +170,17 @@ function memoryAllocationLRUAlgorithm(frames, allocationOrder) {
         }
     });
 
-    //updateMemoryAllocationSummary(allocationOrder.length, pageFaults);
+    updateMemoryAllocationSummary(allocationOrder.length, pageFaults);
 }
 
 function updateMemoryAllocationSummary(totalReferences, pageFaults) {
     $('#memoryAllocationSummary').removeAttr('hidden');
 
+    const pageFaultRate = pageFaults / totalReferences;
 
+    $('#pageRequestsTotal').text(totalReferences);
+    $('#pageFaultsTotal').text(pageFaults);
+    $('#pageFaultsRate').text('%' + (pageFaultRate * 100).toFixed(2));
 }
 
 // Função principal
