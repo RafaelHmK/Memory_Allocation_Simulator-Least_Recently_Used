@@ -73,10 +73,6 @@ function defineAllocationOrder() {
     unorderedPagesContainer.disableSelection();
 }
 
-function memoryAllocationLRUAlgorith() {
-    
-}
-
 function displayMemoryAllocationGraph() {
     event.preventDefault();
 
@@ -108,102 +104,76 @@ function displayMemoryAllocationGraph() {
     });
     memoryAllocationHeader.append(secondHeaderRow);
 
-    for (let i = 1; i <= frameQuant; i++) {
+    for (let i = 0; i < frameQuant; i++) {
         const memoryAllocationRow = $('<tr></tr>');
-        const frameElement = $(`<td class="frameHeader">Q${i}</td>`);
+        const frameElement = $(`<td class="frameHeader">Q${i+1}</td>`);
         memoryAllocationRow.append(frameElement);
 
         for (let j = 0; j < allocationOrder.length; j++) {
-            const cell = $('<td></td>');
+            const cell = $(`<td id="${i}_${j}"></td>`);
             memoryAllocationRow.append(cell);
         }
 
         $('#memoryAllocationTable tbody').append(memoryAllocationRow);
     }
 
-    let pageFaults = 0;
+    memoryAllocationLRUAlgorithm(frames, allocationOrder);
+}
 
-
-
+function memoryAllocationLRUAlgorithm(frames, allocationOrder) {
     $('#memoryAllocationContainer').removeAttr('hidden');
-}
 
+    const frameUsage = new Map(); // Para rastrear o uso dos quadros para LRU
 
+    allocationOrder.each(function(colIndex, pageElement) {
+        const pageName = $(pageElement).text();
+        let pagePlaced = false;
 
-// Algoritmo de Escalonamento por Prioridade (Não Preemptivo)
-function priorityScheduling(processes) {
-    let currentTime = 0;
-    let ganttData = [];
-    let completedProcesses = 0;
-    const totalProcesses = processes.length;
-
-    while (completedProcesses < totalProcesses) {
-        // Filtra os processos que já chegaram e que ainda têm tempo restante
-        const availableProcesses = processes.filter(p => p.arrivalTime <= currentTime && p.remainingTime > 0);
-
-        if (availableProcesses.length > 0) {
-            // Ordena os processos disponíveis pela prioridade (menor valor = maior prioridade) depois pelo tempo de execução (menor valor = maior prioridade) e por último pela ordem de chegada (menor valor = maior prioridade)
-            availableProcesses.sort((a, b) => {
-                if (a.priority !== b.priority) return a.priority - b.priority;
-                else if (a.burstTime !== b.burstTime) return a.burstTime - b.burstTime;
-                else return a.arrivalTime - b.arrivalTime;
-            });
-
-            // Seleciona o processo com maior prioridade (menor valor de prioridade)
-            const currentProcess = availableProcesses[0];
-
-            // Adiciona o processo ao gráfico de Gantt com seu tempo de execução total
-            ganttData.push({
-                processName: currentProcess.name,
-                startTime: currentTime,
-                endTime: currentTime + currentProcess.remainingTime
-            });
-
-            // Atualiza o tempo atual com o tempo de execução completo do processo
-            currentTime += currentProcess.remainingTime;
-
-            // Marca o processo como concluído (tempo restante = 0)
-            currentProcess.remainingTime = 0;
-
-            // Incrementa o número de processos concluídos
-            completedProcesses++;
-        } else {
-            // Se não houver processos disponíveis, avança o tempo até o próximo processo chegar
-            currentTime++;
-        }
-    }
-
-    return ganttData;
-}
-
-// Função para exibir o gráfico de Gantt com "X" para tempo de execução
-function displayGanttChart(ganttData) {
-    const ganttTable = document.getElementById('ganttChart');
-    ganttTable.innerHTML = '';
-
-    const totalTime = Math.max(...ganttData.map(g => g.endTime));
-    
-    // Adiciona a linha de tempos (header)
-    let timeRow = '<tr><th class="timeHeader">Tempo</th>';
-    for (let i = 0; i < totalTime; i++) {
-        timeRow += `<th class="timeHeader">${i}</th>`;
-    }
-    timeRow += '</tr>';
-    ganttTable.innerHTML += timeRow;
-
-    // Adiciona as linhas para cada processo
-    ganttData.forEach(data => {
-        let processRow = `<tr><th class="processHeader">${data.processName}</th>`;
-        for (let i = 0; i < totalTime; i++) {
-            if (i >= data.startTime && i < data.endTime) {
-                processRow += `<td class="ganttCell">X</td>`;
-            } else {
-                processRow += `<td class="ganttEmptyCell"></td>`;
+        // Verifique se há uma posição desocupada no array de quadros
+        for (let i = 0; i < frames.length; i++) {
+            if (frames[i] === null) {
+                frames[i] = pageName;
+                frameUsage.set(pageName, colIndex); // Atualizar uso
+                pagePlaced = true;
+                break;
             }
         }
-        processRow += '</tr>';
-        ganttTable.innerHTML += processRow;
+
+        // Se não houver posição desocupada, aplique o princípio LRU
+        if (!pagePlaced) {
+            // Encontre a página menos recentemente usada
+            let lruPage = null;
+            let lruIndex = -1;
+            frameUsage.forEach((lastUsedIndex, page) => {
+                if (lruIndex === -1 || lastUsedIndex < lruIndex) {
+                    lruPage = page;
+                    lruIndex = lastUsedIndex;
+                }
+            });
+
+            // Substitua a página LRU pela página atual
+            const lruPageIndex = frames.indexOf(lruPage);
+            frames[lruPageIndex] = pageName;
+            frameUsage.delete(lruPage); // Remova a página antiga do rastreamento de uso
+            frameUsage.set(pageName, colIndex); // Atualizar uso com a nova página
+        }
+
+        // Atualize a tabela do frontend
+        for (let i = 0; i < frames.length; i++) {
+            const cellId = `#${i}_${colIndex}`;
+            const cell = $(cellId);
+            if (frames[i] !== null) cell.text(frames[i]);
+            else cell.text('-');
+        }
     });
+
+    //updateMemoryAllocationSummary(allocationOrder.length, pageFaults);
+}
+
+function updateMemoryAllocationSummary(totalReferences, pageFaults) {
+    $('#memoryAllocationSummary').removeAttr('hidden');
+
+
 }
 
 // Função principal
