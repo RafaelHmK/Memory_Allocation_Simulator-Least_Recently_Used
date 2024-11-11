@@ -17,8 +17,7 @@
     <div class="container">
         <div class="container-fluid my-5">
             <div class="row d-flex justify-content-between align-items-center mb-3">
-                <h2 class="h2 col-12 col-sm-9 text-start font-semibold text-white m-0">Simulador de Alocação de Memória
-                    - LRU</h2>
+                <h2 class="h2 col-12 col-sm-9 text-start font-semibold text-white m-0">Simulador de Alocação de Memória - LRU</h2>
                 <div class="col-12 col-sm-3 dropdown text-end justify-content-end">
                     <button id="createProcess" class="btn btn-primary">Criar Processo(*)</button>
                 </div>
@@ -46,8 +45,7 @@
                 <!-- Tabela para listar as páginas carregadas -->
                 <div id="pageListContainer" class="list-group" hidden>
                     <h3>Páginas Carregadas</h3>
-                    <table id="pageList"
-                        class="table align-middle table-bordered table-hover text-center rounded overflow-hidden">
+                    <table id="pageList" class="table align-middle table-bordered table-hover text-center rounded overflow-hidden">
                         <thead>
                             <tr>
                                 <th id="processTableHeader">Processos</th>
@@ -69,15 +67,20 @@
                     </div>
                 </form>
 
-                <div class="w-100 d-flex align-items-center justify-content-center">
+                <div class="w-100 d-flex align-items-center justify-content-center mb-3">
                     <button id="defineAllocationOrder" class="btn btn-primary w-50" data-bs-toggle="modal" data-bs-target="#memoryAllocationModal" hidden>Definir Ordem De Alocação</button>
                 </div>
 
-                <!-- Exibição do gráfico de Gantt -->
+                <!-- Exibição do gráfico de Alocação de Memória -->
                 <div id="memoryAllocationContainer" hidden>
-                    <h3>Alocação de Memória</h3>
-                    <table>
-                        <!-- O gráfico será gerado aqui -->
+                    <h3>Alocação de Memória - LRU</h3>
+                    <table id="memoryAllocationTable" class="table align-middle table-bordered table-hover text-center rounded overflow-hidden">
+                        <thead>
+                            <!-- Header da tabela de alocação de memória -->
+                        </thead>
+                        <tbody>
+                            <!-- Quadros de memória serão exibidos aqui -->
+                        </tbody>
                     </table>
                 </div>
             </div>

@@ -73,11 +73,60 @@ function defineAllocationOrder() {
     unorderedPagesContainer.disableSelection();
 }
 
-function memoryAllocation() {
-
+function memoryAllocationLRUAlgorith() {
+    
 }
 
+function displayMemoryAllocationGraph() {
+    event.preventDefault();
 
+    const modal = document.getElementById('memoryAllocationModal');
+    const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+    modalInstance.hide();
+
+    const frameQuant = parseInt($('#framing').val());
+    const allocationOrder = $('#memoryAllocationForm ul li');
+
+    const frames = Array.from({ length: frameQuant }, () => null);
+
+    const memoryAllocationHeader = $('#memoryAllocationTable thead');
+    memoryAllocationHeader.empty();
+
+    const firstHeaderRow = $(`<tr>
+        <th class="emptyTableCell"></th>
+        <th colspan="${allocationOrder.length}" class="pageHeader">Páginas</th>
+    </tr>`);
+    memoryAllocationHeader.append(firstHeaderRow);
+
+    const secondHeaderRow = $(`<tr>
+        <th id="frameHeader">Quadros</th>
+    </tr>`);
+    allocationOrder.each(function(index, page) {
+        const pageName = $(page).text();
+        const headerCell = `<th class="pageHeader">${pageName}</th>`;
+        secondHeaderRow.append(headerCell);
+    });
+    memoryAllocationHeader.append(secondHeaderRow);
+
+    for (let i = 1; i <= frameQuant; i++) {
+        const memoryAllocationRow = $('<tr></tr>');
+        const frameElement = $(`<td class="frameHeader">Q${i}</td>`);
+        memoryAllocationRow.append(frameElement);
+
+        for (let j = 0; j < allocationOrder.length; j++) {
+            const cell = $('<td></td>');
+            memoryAllocationRow.append(cell);
+        }
+
+        $('#memoryAllocationTable tbody').append(memoryAllocationRow);
+    }
+
+    let pageFaults = 0;
+
+
+
+    $('#memoryAllocationContainer').removeAttr('hidden');
+}
 
 
 
@@ -157,11 +206,11 @@ function displayGanttChart(ganttData) {
     });
 }
 
-// Função principal para iniciar o escalonamento e exibir o gráfico de Gantt
+// Função principal
 document.addEventListener("DOMContentLoaded", function () {
     $('#createProcess').on('click', createProcess);
     $('#definePaginationForm').on('submit', definePagination);
     $('#defineFramingForm').on('submit', defineFraming);
     $('#defineAllocationOrder').on('click', defineAllocationOrder);
-    $('#memoryAllocationForm').on('submit', memoryAllocation);
+    $('#memoryAllocationForm').on('submit', displayMemoryAllocationGraph);
 });

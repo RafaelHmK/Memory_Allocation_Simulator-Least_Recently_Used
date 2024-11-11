@@ -33,7 +33,7 @@ body {
     font-weight: bold;  
 }
 
-#definePaginationForm button, #processTableHeader, #defineFramingForm button {
+#definePaginationForm button, #processTableHeader, #defineFramingForm button, #memoryAllocationTable, #pageHeader, #memoryAllocationTable .pageHeader {
     background-color: #f56a00; /* Laranja */
     color: #ffffff;
 }
@@ -43,7 +43,7 @@ body {
     color: #ffffff;
 }
 
-#pageTableHeader {
+#pageTableHeader, #frameHeader, #memoryAllocationTable .frameHeader {
     background-color: #4a90e2; /* Azul */
     color: #ffffff;
 }
@@ -54,3 +54,11 @@ body {
 }
 
 ul li { cursor: move; }
+
+#memoryAllocationTable { empty-cells: hide; }
+
+#memoryAllocationTable .emptyTableCell {
+    background-color: #1e1e1e;
+    border-top: #1e1e1e solid 1px !important;
+    border-left: #1e1e1e solid 1px !important;
+}
